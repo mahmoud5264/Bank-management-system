@@ -8,79 +8,106 @@ const ll N =1e5+5 , M = 505 , MOD = 998244353 , oo = 1e18;
 
 struct client{
     string name,password;
-    int number,money;
+    int number,money,year,month,day;
     bool valid;
 }a[N];
-int id,num,money;
+
+int id,num,money,months[15]={0,31,29,31,30,31,30,31,31,30,31,30,31};
 bool yes,cur;
 string pass;
 
 
-void check(){
-    cout<<"Enter account number"<<endl;
-    cin>>num;
-    if(!a[num].valid){
-        cout<<"Account number is not valid"<<endl;
-        cur=0;
+void check() {
+    cout << "Enter account number" << endl;
+    cin >> num;
+    if (!a[num].valid) {
+        cout << "Account number is not valid" << endl;
+        cur = 0;
         return;
     }
-    cout<<"Enter account password"<<endl;
-    cin>>pass;
-    if(a[num].password!=pass){
-        cout<<"Account password is not valid"<<endl;
-        cur=0;
+    cout << "Enter account password" << endl;
+    cin >> pass;
+    if (a[num].password != pass) {
+        cout << "Account password is not valid" << endl;
+        cur = 0;
         return;
     }
 }
 
-void withdraw(){
+void withdraw() {
     check();
-    if(!cur) return;
-    cout<<"Enter amount of moeny to withdraw"<<endl;
-    cin>>money;
-    if(a[num].money<money){
-        cout<<"Account money is not enough"<<endl;
+    if (!cur) return;
+    w1:
+    cout << "Enter amount of money to withdraw" << endl;
+    cin >> money;
+    if (a[num].money < money) {
+        cout << "Account money is not enough" << endl;
+        goto w1;
         return;
     }
-    a[num].money-=money;
-    cout<<"Successful withdraw"<<endl;
+    a[num].money -= money;
+    cout << "Successful withdraw" << endl;
+    cout << "Your current money : " << a[num].money << endl;
 }
 
-void deposit(){
+void deposit() {
     check();
-    if(!cur) return;
-    cout<<"Enter amount of moeny to deposit"<<endl;
-    cin>>money;
-    a[num].money+=money;
-    cout<<"Successful deposit"<<endl;
+    if (!cur) return;
+    cout << "Enter amount of money to deposit" << endl;
+    cin >> money;
+    a[num].money += money;
+    cout << "Successful deposit" << endl;
+    cout << "Your current money : " << a[num].money << endl;
+
 }
 
-void create(){
+void create() {
     id++;
-    a[id].valid=1;
-    a[id].number=id;
-    cout<<"Enter your name"<<endl;
-    cin>>a[id].name;
-    cout<<"Enter a password"<<endl;
-    cin>>a[id].password;
-    cout<<"If you want to deposit money enter 1"<<endl;
-    string s;
-    cin>>s;
-    if(s=="1"){
-        cout<<"Enter amount of money to deposit"<<endl;
-        cin>>money;
-        a[id].money+=money;
+    a[id].valid = 1;
+    a[id].number = id;
+    cout << "Enter your name" << endl;
+    cin >> a[id].name;
+    cout << "Enter a password" << endl;
+    cin >> a[id].password;
+
+    y:
+    cout << "Enter your birth year" << endl;
+    cin >> a[id].year;
+    if (a[id].year > 2012 || a[id].year < 1900) {
+        cout << "Invalid entry" << endl;
+        goto y;
     }
-    cout<<"Account is created"<<endl;
+
+    m:
+    cout << "Enter your birth month" << endl;
+    cin >> a[id].month;
+    if (a[id].month > 13 || a[id].month < 1) {
+        cout << "Invalid entry" << endl;
+        goto m;
+    }
+
+    d:
+    cout << "Enter your birth day" << endl;
+    cin >> a[id].day;
+    if (a[id].day > months[a[id].month] || (a[id].day > 28 && a[id].month == 2 && a[id].year % 4 == 0)) {
+        cout << "Invalid entry" << endl;
+        goto d;
+    }
+
+    cout << "Enter amount of money to deposit" << endl;
+    cin >> money;
+    a[id].money += money;
+    cout << "Account is created" << endl;
+
 }
 
-void show(){
+void show() {
     check();
-    if(!cur) return;
-    cout<<"Account name: "<<a[num].name<<endl;
-    cout<<"Account password: "<<a[num].password<<endl;
-    cout<<"Account number: "<<a[num].number<<endl;
-    cout<<"Account money: "<<a[num].money<<endl;
+    if (!cur) return;
+    cout << "Account name: " << a[num].name << endl;
+    cout << "Account password: " << a[num].password << endl;
+    cout << "Account number: " << a[num].number << endl;
+    cout << "Account money: " << a[num].money << endl;
 }
 
 
@@ -95,12 +122,41 @@ void change(){
         cin>>s;
         a[num].name=s;
     }
+
     cout<<"If you want to change account password enter 2"<<endl;
     cin>>s;
     if(s=="2"){
         cout<<"Enter new account password"<<endl;
         cin>>s;
         a[num].password=s;
+    }
+
+    cout<<"If you want to change account birth day enter 3"<<endl;
+    cin>>s;
+    if(s=="3") {
+        y:
+        cout << "Enter your birth year" << endl;
+        cin >> a[id].year;
+        if (a[id].year > 2012 || a[id].year < 1900) {
+            cout << "Invalid entry" << endl;
+            goto y;
+        }
+
+        m:
+        cout << "Enter your birth month" << endl;
+        cin >> a[id].month;
+        if (a[id].month > 13 || a[id].month < 1) {
+            cout << "Invalid entry" << endl;
+            goto m;
+        }
+
+        d:
+        cout << "Enter your birth day" << endl;
+        cin >> a[id].day;
+        if (a[id].day > months[a[id].month] || (a[id].day > 28 && a[id].month == 2 && a[id].year % 4 == 0)) {
+            cout << "Invalid entry" << endl;
+            goto d;
+        }
     }
     cout<<"Changes are done"<<endl;
 }
