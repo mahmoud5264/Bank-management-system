@@ -112,14 +112,6 @@ void del(){
     cout<<"Account is deleted"<<endl;
 }
 
-void close(){
-    check();
-    if(!cur) return;
-    yes=0;
-}
-
-
-
 //#define endl "\n"
 int main() {
     ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
@@ -140,12 +132,13 @@ int main() {
         int c;
         cin>>c;
         if(c==1) create();
-        if(c==2) withdraw();
-        if(c==3) deposit();
-        if(c==4) show();
-        if(c==5) change();
-        if(c==6) del();
-        if(c==7) close();
+        else if(c==2) withdraw();
+        else if(c==3) deposit();
+        else if(c==4) show();
+        else if(c==5) change();
+        else if(c==6) del();
+        else if(c==7) yes=0;
+        else cout<<"Invalid entry"<<endl;
         cout<<"Thanks for using our bank"<<endl<<endl<<endl<<endl;
     }
 
