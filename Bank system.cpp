@@ -2,19 +2,12 @@
 typedef long long ll;
 typedef long double ld;
 using namespace std;
-int di[8] = {1, -1, 0, 0, 1, 1, -1, -1};
-int dj[8] = {0, 0, 1, -1, 1, -1, 1, -1};
-const ll N =1e5+5 , M = 505 , MOD = 998244353 , oo = 1e18;
+const int N =1e5+5;
 
-struct client{
-    string name,password;
-    int number,money,year,month,day;
-    bool valid;
-}a[N];
-
-int id,num,money,months[15]={0,31,29,31,30,31,30,31,31,30,31,30,31};
-bool yes,cur;
-string pass,monthstr[]={"n","January","February","Mars","April","May","June",
+int number,year,month,day,num,money,tmpmoney,months[]={0,31,29,31,30,31,30,31,31,30,31,30,31};
+bool yes,cur,valid;
+string s,name,password,pass;
+string monthstr[]={"n","January","February","Mars","April","May","June",
                           "Julie","August","September","November","December"};
 
 
@@ -25,11 +18,13 @@ pair<ll,bool> str_to_int(string s) {
             return {0,0};
         }
         ret = ret * 10 + s[i] - '0';
+        if(ret>=1000000000) return {0,0};
     }
     return {ret,1};
 }
 
 void check() {
+    system("CLS");
     cout << "Enter account number" << endl;
     cin >> num;
     if (!a[num].valid) {
@@ -44,6 +39,116 @@ void check() {
         cur = 0;
         return;
     }
+    _sleep(1000);
+}
+
+
+void create() {
+    system("CLS");
+    ifstream clientsin;
+    clientsin.open("data.txt");
+    string tmp,tmp2;
+    nu:
+    cout<<"Enter account number"<<endl;
+    cin>>s;
+    if(str_to_int(s).second==0){
+        cout<<"Account number must be a positive integer less than 1000000000"<<endl;
+        goto nu;
+    }
+    num=str_to_int(s).first;
+
+    while(getline(clientsin,tmp)){
+        tmp2="";
+        for(auto x:tmp){
+            if(x==' ') break;
+            tmp+=x;
+        }
+        if(s==tmp2){
+            cout<<"There is another account with this account number"<<endl;
+            _sleep(1000);
+            goto nu;
+        }
+    }
+    clientsin.close();
+
+    n:
+    cout << "Enter your name" << endl;
+    cin >> name;
+    for(int i=0;i<name.size();i++){
+        if(!(name[i]>='A' && name[i]<='Z')
+        && !(name[i]>='a' && name[i]<='z')){
+            cout<<"Account name must have only latin letters"<<endl;
+            _sleep(1000);
+            goto n;
+        }
+    }
+
+    cout << "Enter a password" << endl;
+    cin >> password;
+
+    y:
+    cout << "Enter your birth year" << endl;
+    cin>>s;
+    if(str_to_int(s).second==0){
+        cout<<"Year must be integer"<<endl;
+        _sleep(1000);
+        goto d;
+    }
+    year=str_to_int(s).first;
+    if (year > 2010 || year < 1900) {
+        cout << "Year must be between 1900 and 2010" << endl;
+        _sleep(1000);
+        goto y;
+    }
+
+    m:
+    cout << "Enter your birth month" << endl;
+    cin>>s;
+    if(str_to_int(s).second==0){
+        cout<<"Month must be integer"<<endl;
+        _sleep(1000);
+        goto m;
+    }
+    month=str_to_int(s).first;
+
+    if (month > 12 || month < 1) {
+        cout << "Month must be between 1 and 12" << endl;
+        _sleep(1000);
+        goto m;
+    }
+
+    d:
+    cout << "Enter your birth day" << endl;
+    cin>>s;
+    if(str_to_int(s).second==0){
+        cout<<"Day must be integer"<<endl;
+        _sleep(1000);
+        goto d;
+    }
+    day=str_to_int(s).first;
+
+    if (day > months[month] || (day > 28 && month == 2 && year % 4 == 0)) {
+        cout << "This day is not valid in "<<monthstr[month] << endl;
+        _sleep(1000);
+        goto d;
+    }
+
+    de:
+    cout << "Enter amount of money to deposit" << endl;
+    cin>>s;
+    if(str_to_int(s).second==0){
+        cout<<"Amount of money must be a positive integer less than 1000000000"<<endl;
+        _sleep(1000);
+        goto de;
+    }
+    tmpmoney=str_to_int(s).first;
+    money += tmpmoney;
+    cout << "Account is created" << endl;
+    ofstream clientsout;
+    clientsout.open("data.txt",ios::app);
+    clientsout<<number<<" "<<password<<" "<<name<<" "<<money<<" "<<year<<" "<<month<<" "<<day<<endl;
+    _sleep(1000);
+
 }
 
 void withdraw() {
@@ -54,7 +159,7 @@ void withdraw() {
     string s;
     cin>>s;
     if(str_to_int(s).second==0){
-        cout<<"Amount of money must be a positive integer"<<endl;
+        cout<<"Amount of money must be a positive integer less than 1000000000"<<endl;
         goto w;
     }
     money=str_to_int(s).first;
@@ -66,6 +171,7 @@ void withdraw() {
     a[num].money -= money;
     cout << "Successful withdraw" << endl;
     cout << "Your current money : " << a[num].money << endl;
+    _sleep(1000);
 }
 
 void deposit() {
@@ -76,7 +182,7 @@ void deposit() {
     string s;
     cin>>s;
     if(str_to_int(s).second==0){
-        cout<<"Amount of money must be a positive integer"<<endl;
+        cout<<"Amount of money must be a positive integer less than 1000000000"<<endl;
         goto d;
     }
     money=str_to_int(s).first;
@@ -84,78 +190,7 @@ void deposit() {
     a[num].money += money;
     cout << "Successful deposit" << endl;
     cout << "Your current money : " << a[num].money << endl;
-
-}
-
-void create() {
-    id++;
-    a[id].valid = 1;
-    a[id].number = id;
-    n:
-    cout << "Enter your name" << endl;
-    cin >> a[id].name;
-    if(!(a[id].name[0]>='A' && a[id].name[0]<='Z')
-    && !(a[id].name[0]>='a' && a[id].name[0]<='z')){
-        cout<<"Account name must begin with a latin letter"<<endl;
-        goto n;
-    }
-
-    cout << "Enter a password" << endl;
-    cin >> a[id].password;
-
-    string s;
-    y:
-    cout << "Enter your birth year" << endl;
-    cin>>s;
-    if(str_to_int(s).second==0){
-        cout<<"Year must be integer"<<endl;
-        goto d;
-    }
-    a[id].year=str_to_int(s).first;
-    if (a[id].year > 2010 || a[id].year < 1900) {
-        cout << "Year must be between 1900 and 2010" << endl;
-        goto y;
-    }
-
-    m:
-    cout << "Enter your birth month" << endl;
-    cin>>s;
-    if(str_to_int(s).second==0){
-        cout<<"Month must be integer"<<endl;
-        goto m;
-    }
-    a[id].month=str_to_int(s).first;
-
-    if (a[id].month > 13 || a[id].month < 1) {
-        cout << "Month must be between 1 and 12" << endl;
-        goto m;
-    }
-
-    d:
-    cout << "Enter your birth day" << endl;
-    cin>>s;
-    if(str_to_int(s).second==0){
-        cout<<"Day must be integer"<<endl;
-        goto d;
-    }
-    a[id].day=str_to_int(s).first;
-
-    if (a[id].day > months[a[id].month] || (a[id].day > 28 && a[id].month == 2 && a[id].year % 4 == 0)) {
-        cout << "This day is not valid in "<<monthstr[a[id].month] << endl;
-        goto d;
-    }
-
-    de:
-    cout << "Enter amount of money to deposit" << endl;
-    cin>>s;
-    if(str_to_int(s).second==0){
-        cout<<"Amount of money must be a positive integer"<<endl;
-        goto de;
-    }
-    money=str_to_int(s).first;
-    a[id].money += money;
-    cout << "Account is created" << endl;
-
+    _sleep(1000);
 }
 
 void show() {
@@ -165,6 +200,7 @@ void show() {
     cout << "Account password: " << a[num].password << endl;
     cout << "Account number: " << a[num].number << endl;
     cout << "Account money: " << a[num].money << endl;
+    _sleep(1000);
 }
 
 
@@ -172,17 +208,18 @@ void change(){
     check();
     if(!cur) return;
     cout<<"If you want to change account name enter 1"<<endl;
-    string s;
     cin>>s;
     if(s=="1"){
         n:
         cout<<"Enter new account name"<<endl;
         cin >> a[num].name;
-        if(!(a[num].name[0]>='A' && a[num].name[0]<='Z')
-           && !(a[num].name[0]>='a' && a[num].name[0]<='z')){
-            cout<<"Account name must begin with a latin letter"<<endl;
+        for(int i=0;i<a[num].name.size();i++){
+        if(!(a[num].name[i]>='A' && a[num].name[i]<='Z')
+        && !(a[num].name[i]>='a' && a[num].name[i]<='z')){
+            cout<<"Account name must have only latin letters"<<endl;
             goto n;
         }
+    }
         cout<<"Account name is updated"<<endl;
     }
 
@@ -210,7 +247,7 @@ void change(){
         m:
         cout << "Enter your birth month" << endl;
         cin >> a[id].month;
-        if (a[id].month > 13 || a[id].month < 1) {
+        if (a[id].month > 12 || a[id].month < 1) {
             cout << "Month must be integer between 1 and 12" << endl;
             goto m;
         }
@@ -225,6 +262,7 @@ void change(){
         cout<<"Birth day is updated"<<endl;
     }
     cout<<"Changes are done"<<endl;
+    _sleep(1000);
 }
 
 void del(){
@@ -232,6 +270,7 @@ void del(){
     if(!cur) return;
     a[num].valid=0;
     cout<<"Account is deleted"<<endl;
+    _sleep(1000);
 }
 
 //#define endl "\n"
@@ -241,6 +280,7 @@ int main() {
     //memset(dp,-1,sizeof dp);
     yes=1;
     while(yes){
+        system("CLS");
         cur=1;
         cout<<"Welcome to our bank"<<endl;
         cout<<"Please enter your choice"<<endl;
@@ -262,6 +302,7 @@ int main() {
         else if(c=="7") yes=0;
         else cout<<"Invalid entry"<<endl;
         cout<<"Thanks for using our bank"<<endl<<endl<<endl<<endl;
+        _sleep(1000);
     }
 
     return 0;
